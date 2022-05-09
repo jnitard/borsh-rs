@@ -223,6 +223,7 @@ where
         };
         Self::add_definition(Self::declaration(), definition, definitions);
         T::add_definitions_recursively(definitions);
+        E::add_definitions_recursively(definitions);
     }
 
     fn declaration() -> Declaration {
@@ -401,6 +402,23 @@ mod tests {
                 ("None".to_string(), "nil".to_string()),
                 ("Some".to_string(), "Option<u64>".to_string()),
                 ]}
+            },
+            actual_defs
+        );
+    }
+
+    #[test]
+    fn simple_result() {
+        let actual_name = core::result::Result::<u32, i64>::declaration();
+        let mut actual_defs = map!();
+        Result::<u32, i64>::add_definitions_recursively(&mut actual_defs);
+        assert_eq!("Result<u32, i64>", actual_name);
+        assert_eq!(
+            map! {
+                 "Result<u32, i64>" => Definition::Enum {variants: vec![
+                    ("Ok".to_string(), "u32".to_string()),
+                    ("Err".to_string(), "i64".to_string())
+                 ]}
             },
             actual_defs
         );
